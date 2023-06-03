@@ -14,9 +14,11 @@ class TableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "White House petitions"
+//        title = "White House petitions"
 
-        if #available(iOS 15.0, *) {
+        if #available(iOS 16.0, *) {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(title: nil, image: UIImage(systemName: "line.3.horizontal.decrease.circle"), target: self, action: #selector(showFilterAlert))
+        } else if #available(iOS 15.0, *) {
             navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal.decrease.circle"), style: .plain, target: self, action: #selector(showFilterAlert))
         } else if #available(iOS 13.0, *) {
             navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3.decrease.circle"), style: .plain, target: self, action: #selector(showFilterAlert))
@@ -79,6 +81,29 @@ class TableViewController: UITableViewController {
         present(alertController, animated: true)
     }
 
+    private func filterPetitions(by keyword: String) {
+        if keyword.isEmpty {
+            filteredPetitions = petitions
+            navigationItem.leftBarButtonItem?.image = UIImage(systemName: "line.3.horizontal.decrease.circle")
+            return
+        }
+
+        if #available(iOS 16.0, *) {
+            navigationItem.leftBarButtonItem?.title = "Filtered by \"\(keyword)\""
+            navigationItem.leftBarButtonItem?.image = nil
+        }
+
+        filteredPetitions = petitions.filter { petition in
+            if let _ = petition.title.range(of: keyword, options: .caseInsensitive) {
+                return true
+            }
+            if let _ = petition.body.range(of: keyword, options: .caseInsensitive) {
+                return true
+            }
+            return false
+        }
+    }
+
     @objc private func showFilterAlert() {
         let alertController = UIAlertController(title: "Enter something to filter", message: nil, preferredStyle: .alert)
         alertController.addTextField()
@@ -87,13 +112,8 @@ class TableViewController: UITableViewController {
                 return
             }
 
-            filteredPetitions = []
-            for petition in self.petitions {
-                if petition.title.contains(item) || petition.body.contains(item) {
-                    self.filteredPetitions.append(petition)
-                    tableView.reloadData()
-                }
-            }
+            self.filterPetitions(by: item)
+            tableView.reloadData()
         })
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
