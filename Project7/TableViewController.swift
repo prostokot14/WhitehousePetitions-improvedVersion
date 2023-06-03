@@ -33,6 +33,8 @@ class TableViewController: UITableViewController {
             var content = cell.defaultContentConfiguration()
             content.text = petition.title
             content.secondaryText = petition.body
+            content.textProperties.numberOfLines = 1
+            content.secondaryTextProperties.numberOfLines = 1
             cell.contentConfiguration = content
         } else {
             cell.textLabel?.text = petition.title
@@ -40,6 +42,12 @@ class TableViewController: UITableViewController {
         }
 
         return cell
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let detailViewController = DetailViewController()
+        detailViewController.detailItem = petitions[indexPath.row]
+        navigationController?.pushViewController(detailViewController, animated: true)
     }
 
     private func parce(json: Data) {
