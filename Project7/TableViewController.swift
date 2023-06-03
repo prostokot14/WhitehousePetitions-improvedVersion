@@ -14,7 +14,7 @@ class TableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-//        title = "White House petitions"
+        title = "White House petitions"
 
         if #available(iOS 16.0, *) {
             navigationItem.leftBarButtonItem = UIBarButtonItem(title: nil, image: UIImage(systemName: "line.3.horizontal.decrease.circle"), target: self, action: #selector(showFilterAlert))
