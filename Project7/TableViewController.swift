@@ -119,8 +119,13 @@ class TableViewController: UITableViewController {
                 return
             }
 
-            self.filterPetitions(by: item)
-            tableView.reloadData()
+            DispatchQueue.global().async {
+                self.filterPetitions(by: item)
+
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            }
         })
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
