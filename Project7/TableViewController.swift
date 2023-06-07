@@ -28,14 +28,14 @@ class TableViewController: UITableViewController {
 
         let urlString = navigationController?.tabBarItem.tag == 0 ? "https://www.hackingwithswift.com/samples/petitions-1.json" : "https://www.hackingwithswift.com/samples/petitions-2.json"
 
-        if let url = URL(string: urlString) {
-            if let data = try? Data(contentsOf: url) {
-                parce(json: data)
+        DispatchQueue.global(qos: .userInitiated).async {
+            if let url = URL(string: urlString), let data = try? Data(contentsOf: url) {
+                self.parce(json: data)
                 return
             }
-        }
 
-        showError()
+            self.showError()
+        }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -71,14 +71,19 @@ class TableViewController: UITableViewController {
         if let jsonPetitions = try? JSONDecoder().decode(Petitions.self, from: json) {
             petitions = jsonPetitions.results
             filteredPetitions = petitions
-            tableView.reloadData()
+
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
     }
 
     private func showError() {
-        let alertController = UIAlertController(title: "Loading error", message: "There was a problem loading the feed; please check your connection and try again.", preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alertController, animated: true)
+        DispatchQueue.main.async {
+            let alertController = UIAlertController(title: "Loading error", message: "There was a problem loading the feed; please check your connection and try again.", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(alertController, animated: true)
+        }
     }
 
     private func filterPetitions(by keyword: String) {
