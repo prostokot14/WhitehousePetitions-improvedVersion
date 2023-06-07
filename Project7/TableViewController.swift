@@ -75,6 +75,8 @@ class TableViewController: UITableViewController {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
+        } else {
+            showError()
         }
     }
 
