@@ -7,10 +7,12 @@
 
 import UIKit
 
-class TableViewController: UITableViewController {
+final class TableViewController: UITableViewController {
+    // MARK: - Private Properties
     private var petitions = [Petition]()
     private var filteredPetitions = [Petition]()
 
+    // MARK: - UIViewController
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -38,35 +40,7 @@ class TableViewController: UITableViewController {
         }
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        filteredPetitions.count
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        let petition = filteredPetitions[indexPath.row]
-
-        if #available(iOS 14.0, *) {
-            var content = cell.defaultContentConfiguration()
-            content.text = petition.title
-            content.secondaryText = petition.body
-            content.textProperties.numberOfLines = 1
-            content.secondaryTextProperties.numberOfLines = 1
-            cell.contentConfiguration = content
-        } else {
-            cell.textLabel?.text = petition.title
-            cell.detailTextLabel?.text = petition.body
-        }
-
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let detailViewController = DetailViewController()
-        detailViewController.detailItem = filteredPetitions[indexPath.row]
-        navigationController?.pushViewController(detailViewController, animated: true)
-    }
-
+    // MARK: - Private Methods
     private func parce(json: Data) {
         if let jsonPetitions = try? JSONDecoder().decode(Petitions.self, from: json) {
             petitions = jsonPetitions.results
@@ -136,5 +110,37 @@ class TableViewController: UITableViewController {
         let alertController = UIAlertController(title: "Credits", message: "The data comes from the We The People API of the Whitehouse.", preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .default))
         present(alertController, animated: true)
+    }
+}
+
+// MARK: - UITableViewController
+extension TableViewController {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        filteredPetitions.count
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        let petition = filteredPetitions[indexPath.row]
+
+        if #available(iOS 14.0, *) {
+            var content = cell.defaultContentConfiguration()
+            content.text = petition.title
+            content.secondaryText = petition.body
+            content.textProperties.numberOfLines = 1
+            content.secondaryTextProperties.numberOfLines = 1
+            cell.contentConfiguration = content
+        } else {
+            cell.textLabel?.text = petition.title
+            cell.detailTextLabel?.text = petition.body
+        }
+
+        return cell
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let detailViewController = DetailViewController()
+        detailViewController.detailItem = filteredPetitions[indexPath.row]
+        navigationController?.pushViewController(detailViewController, animated: true)
     }
 }

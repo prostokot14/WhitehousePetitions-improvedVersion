@@ -9,9 +9,13 @@ import UIKit
 import WebKit
 
 final class DetailViewController: UIViewController {
-    private var webView: WKWebView!
+    // MARK: - Public Properties
     var detailItem: Petition?
 
+    // MARK: - Private Properties
+    private var webView: WKWebView!
+    
+    // MARK: - UIViewController
     override func loadView() {
         webView = WKWebView()
         view = webView
