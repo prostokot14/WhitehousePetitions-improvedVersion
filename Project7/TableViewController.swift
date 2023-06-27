@@ -65,13 +65,17 @@ final class TableViewController: UITableViewController {
     private func filterPetitions(by keyword: String) {
         if keyword.isEmpty {
             filteredPetitions = petitions
-            navigationItem.leftBarButtonItem?.image = UIImage(systemName: "line.3.horizontal.decrease.circle")
+            DispatchQueue.main.async {
+                self.navigationItem.leftBarButtonItem?.image = UIImage(systemName: "line.3.horizontal.decrease.circle")
+            }
             return
         }
 
-        if #available(iOS 16.0, *) {
-            navigationItem.leftBarButtonItem?.title = "Filtered by \"\(keyword)\""
-            navigationItem.leftBarButtonItem?.image = nil
+        DispatchQueue.main.async {
+            if #available(iOS 16.0, *) {
+                self.navigationItem.leftBarButtonItem?.title = "Filtered by \"\(keyword)\""
+                self.navigationItem.leftBarButtonItem?.image = nil
+            }
         }
 
         filteredPetitions = petitions.filter { petition in
